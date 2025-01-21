@@ -2,9 +2,9 @@ use crate::instruction::Opcode;
 
 #[derive(Default)]
 pub struct VM {
-    registers: [i32; 32],
+    pub registers: [i32; 32],
     pc: usize,
-    program: Vec<u8>,
+    pub program: Vec<u8>,
     remainder: u32,
     equal_flag: bool,
 }
@@ -145,6 +145,10 @@ impl VM {
         self.pc += 2;
 
         result
+    }
+
+    pub fn add_byte(&mut self, byte: u8) {
+        self.program.push(byte);
     }
 }
 
