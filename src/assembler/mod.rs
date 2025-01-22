@@ -2,7 +2,9 @@ use crate::instruction::Opcode;
 
 pub mod opcode_parsers;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Token {
-    Op{code: Opcode},
+    Op(Opcode),
+    Register(u8),
+    
 }

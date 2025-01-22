@@ -5,7 +5,8 @@ use crate::instruction::Opcode;
 use super::Token;
 
 pub fn opcode_load(i: &[u8]) -> IResult<&[u8], Token> {
-    
+    let (i, _) = tag("load")(i)?;
+    Ok((i, Token::Op(Opcode::LOAD)))
 }
 
 mod tests {
@@ -15,13 +16,13 @@ mod tests {
     fn test_opcode_load() {
         // First tests that the opcode is detected and parsed correctly
         let result = opcode_load(b"load");
-        assert_eq!(result.is_ok(), true);
+        assert!(result.is_ok());
         let (rest, token) = result.unwrap();
-        assert_eq!(token, Token::Op{code: Opcode::LOAD});
+        assert_eq!(token, Token::Op(Opcode::LOAD));
         assert_eq!(rest, b"");
 
         // Tests that an invalid opcode isn't recognized
         let result = opcode_load(b"aold");
-        assert_eq!(result.is_ok(), false);
+        assert!(!result.is_ok());
     }
 }
