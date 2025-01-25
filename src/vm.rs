@@ -9,7 +9,6 @@ pub struct VM {
     equal_flag: bool,
 }
 
-
 impl VM {
     pub fn new() -> VM {
         Self::default()

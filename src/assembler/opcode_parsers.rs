@@ -1,4 +1,10 @@
-use nom::{branch::alt, bytes::complete::tag, character::complete::{self, alpha0}, combinator::map_res, IResult};
+use nom::{
+    branch::alt,
+    bytes::complete::tag,
+    character::complete::{self, alpha0},
+    combinator::map_res,
+    IResult,
+};
 
 use crate::instruction::Opcode;
 
@@ -10,7 +16,10 @@ pub fn opcode_load(i: &[u8]) -> IResult<&[u8], Token> {
 }
 
 mod tests {
-    use crate::{assembler::{opcode_parsers::opcode_load, Token}, instruction::Opcode};
+    use crate::{
+        assembler::{opcode_parsers::opcode_load, Token},
+        instruction::Opcode,
+    };
 
     #[test]
     fn test_opcode_load() {

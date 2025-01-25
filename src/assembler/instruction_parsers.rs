@@ -1,3 +1,5 @@
+use nom::combinator::opt;
+
 use super::Token;
 
 #[derive(Debug, PartialEq)]
@@ -14,7 +16,7 @@ pub fn instruction_one(i: &[u8]) -> nom::IResult<&[u8], AssemblerInstruction> {
     let (i, register) = super::register_parsers::register_parsers(i)?;
     let (i, _) = nom::character::complete::space1(i)?;
     let (i, operand) = super::operand_parsers::integer_operand(i)?;
-    let (i, _) = nom::character::complete::line_ending(i)?;
+    let (i, _) = opt(nom::character::complete::line_ending)(i)?;
 
     Ok((
         i,
@@ -27,6 +29,44 @@ pub fn instruction_one(i: &[u8]) -> nom::IResult<&[u8], AssemblerInstruction> {
     ))
 }
 
+impl AssemblerInstruction {
+    pub fn to_bytes(&self) -> Vec<u8> {
+        let mut results = vec![];
+        match self.opcode {
+            Token::Op(code) => results.push(code as u8),
+            _ => {
+                println!("Non-opcode found in opcode field");
+                std::process::exit(1);
+            }
+        };
+
+        for operand in [&self.operand1, &self.operand2, &self.operand3] {
+            match operand {
+                Some(t) => AssemblerInstruction::extract_operand(t, &mut results),
+                None => (),
+            }
+        }
+
+        results
+    }
+
+    fn extract_operand(t: &Token, results: &mut Vec<u8>) {
+        match t {
+            Token::Register(reg_num) => results.push(*reg_num),
+            Token::IntegerOperand(value) => {
+                let converted = *value as u16;
+                let byte1 = converted;
+                let byte2 = converted >> 8;
+                results.push(byte2 as u8);
+                results.push(byte1 as u8);
+            }
+            _ => {
+                println!("Opcode found in operand field");
+                std::process::exit(1);
+            }
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {
